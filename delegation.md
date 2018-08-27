@@ -103,7 +103,7 @@ The object returned by this function must observe the following constraints:
    cycle_length`).
 2. Each validator should be assigned to exactly one `committee`.
 2. Each `committee` should consist of no less than `min_committee_size` validators.
-3. There should not exist more than `len(shard_indices)` committees.
+3. There should not exist more than `len(shard_indices)` number of committees.
 4. Allocation of validators to `committees` should be performed to maximize the
    number of `committees` (without exceeding `len(shard_indices)`).
 5. Each `slot` should not feature the same `committee` more than once.
