@@ -13,9 +13,10 @@ The following terms are used in this document:
 
 ### Constants
 
-- `committee`: A set of indices referencing some list of `ValidatorRecords`.
-- `cycle_length`: the amount of slots in a `cycle`.
-- `cycle`: a set of `slots` with length `CYCLE_LENGTH`.
+- `attest`: the process of stating that some shard block is valid.
+- `committee`: A list of indices referencing some list of `ValidatorRecords`.
+- `cycle_length`: the number of slots in a `cycle`.
+- `cycle`: a list of `CYCLE_LENGTH` number of `slots`.
 - `min_committee_size`: the minimum amount of validators required to form a
    `committee`.
 - `shard_id`: the unique identifier of some chain requiring attestation by a
@@ -31,10 +32,9 @@ The following terms are used in this document:
 The function should have the following qualities:
 
 - Each validator should be given exactly one chance to attest each `slot`.
-- A shard should receive no more than one attestation during a single `slot`.
-- Each shard should be attested to `n` times during a cycle, where `0 < n <=
-  cycle_length`.
-- A `shard` should receive as many attestations as possible during a `cycle`.
+- A `shard_id` should receive as many attestations as possible during a `cycle`,
+  without any single `shard_id` recieving multiple attestations during a single
+`slot`.
 
 ## Function Description
 
