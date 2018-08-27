@@ -11,8 +11,6 @@ canonical method for validator delegation.*
 
 The following terms are used in this document:
 
-### Constants
-
 - `attest`: the process of stating that some shard block is valid.
 - `committee`: A list of indices referencing some list of `ValidatorRecords`.
 - `cycle_length`: the number of slots in a `cycle`.
