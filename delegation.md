@@ -1,12 +1,11 @@
 # [WIP] Validator Delegation
 
-The purpose of this documentation is to define the requirements for a function
-that forms committees from a list of validators and assigns those committees to
-shards and slots.
+The purpose of this documentation is to define a function that delegates
+validators to shards in the Beacon Chain.
 
 *Note: this document is produced by Paul Hauner (@paulhauner) and is not
 endorsed at all by the Ethereum Foundation. This is my attempt to define the
-issue at hand.*
+issue at hand and does not represent the canonical method.*
 
 ## Terms
 
@@ -14,25 +13,31 @@ The following terms are used in this document:
 
 ### Constants
 
--  `CYCLE_LENGTH`: the amount of slots in a cycle.
--  `SHARD_COUNT` the number of shards in a system.
--  `MIN_COMMITTEE_SIZE`: a constant representing the minimum amount of
-   validators required to form a committee.
+-  `cycle_length`: the amount of slots in a `cycle`.
+-  `min_committee_size`: the minimum amount of validators required to form a
+   `committee`.
 
 ### Objects/Variables
 
-- `active_validators`: an unique, ordered list of `ValidatorRecords`
-  representing all validators capable to participate in validation.
-- `ValidatorRecord`: an object representing a single validator. This term is
-  used interchangeably with "validator".
-- `committee`: A set of indexes pointing to validators in the
-  `active_validators` list.
+- `committee`: A set of indices referencing some list of `ValidatorRecords`.
+-  `cycle`: a set of `slots` with length `CYCLE_LENGTH`.
 - `shard_id`: the unique identifier of some chain requiring attestation by a
   `committees` in a `slot`.
 - `ShardAndCommittee`: an object linking a `committee` to a `shard`.
 -  `slot`: a set of `ShardAndCommittee` objects representing the requirement
    for some `committee` to attest to some `shard`.
--  `cycle`: a set of `slots` with length `CYCLE_LENGTH`.
+- `ValidatorRecord`: an object representing a single validator. This term is
+  used interchangeably with "validator".
+
+## Required Qualities
+
+The function should have the following qualities:
+
+- Each validator should be given exactly one chance to attest each `slot`.
+- A shard should receive no more than one attestation during a single `slot`.
+- Each shard should be attested to `n` times during a cycle, where `0 < n <=
+  cycle_length`.
+- A `shard` should receive as many attestations as possible during a `cycle`.
 
 ## Function Description
 
@@ -40,13 +45,19 @@ The following terms are used in this document:
 
 The function should accept the following inputs:
 
-- `validator_indices`: a unique list of integers.
+- `validator_indices`: a unique list of integers (assumed to be indices
+  of an external list of `ValidatorRecords`).
 - `shard_indices`: a unique list of `shard_ids`.
 - `cycle_length`: the number of `slots` in a `cycle`.
-- `min_committee_size`: corresponds to the `CYCLE_LENGTH` value.
+- `min_committee_size`: minimum validators per `committee` (see "Terms").
 
 _Note: the `validator_indices` and `shard_indices` parameters should be
-shuffled prior to this function._
+shuffled prior to this function to avoid biases in delegation generated for
+some input parameters (e.g., `len(validator_indicies) % min_committee_size >
+0`)._
+
+_Note: all `validator_indicies` are assumed to be "active validators" which
+should be assigned to attestation duties._
 
 ## Outputs
 
@@ -65,13 +76,13 @@ The program should return an error if:
 
 ### Return Type: List
 
-Unless an error is encountered, a nested list should be returned where the first
-level consists of `CYCLE_LENGTH` lists, where each of those lists contains no
-more than `SHARD_COUNT` number of `ShardAndCommittee` objects.
+Unless an error is encountered, a two-dimensional list should be returned where
+the first dimenson represents a `slot` and the second dimension contains
+the `ShardAndCommittee` objects assigned to each `slot`.
 
 Example:
 
-```
+```python
 # inputs
 validator_indices = [0, 1, 2, 3]
 shard_indices = [0, 1, 2]
@@ -81,19 +92,21 @@ min_committee_size = 2
 # output (list)
 [
     [
-        {shard_id: 0, committee: [0, 1]},
-        {shard_id: 1, committee: [2, 3]},
+        ShardAndCommitte(shard_id=0, committee=[0, 1]),
+        ShardAndCommitte(shard_id=1, committee=[2, 3]),
     ],
     [
-        {shard_id: 2, committee: [0, 1]},
-        {shard_id: 0, committee: [2, 3]},
+        ShardAndCommitte(shard_id=2, committee=[0, 1]),
+        ShardAndCommitte(shard_id=0, committee=[2, 3]),
     ],
 ]
 ```
 
 The object returned by this function must observe the following constraints:
 
-1. Each validator should be assigned to exactly one `committee`.
+1. Each slot should be represented in the list (e.g., `len(output) ==
+   cycle_length`).
+2. Each validator should be assigned to exactly one `committee`.
 2. Each `committee` should consist of no less than `min_committee_size` validators.
 3. There should not exist more than `len(shard_indices)` committees.
 4. Allocation of validators to `committees` should be performed to maximize the
