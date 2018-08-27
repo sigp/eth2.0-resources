@@ -4,8 +4,8 @@ The purpose of this documentation is to define a function that delegates
 validators to shards in the Beacon Chain.
 
 *Note: this document is produced by Paul Hauner (@paulhauner) and is not
-endorsed at all by the Ethereum Foundation. This is my attempt to define the
-issue at hand and does not represent the canonical method.*
+endorsed at all by the Ethereum Foundation. This does not represent the
+canonical method for validator delegation.*
 
 ## Terms
 
@@ -13,14 +13,11 @@ The following terms are used in this document:
 
 ### Constants
 
--  `cycle_length`: the amount of slots in a `cycle`.
--  `min_committee_size`: the minimum amount of validators required to form a
-   `committee`.
-
-### Objects/Variables
-
 - `committee`: A set of indices referencing some list of `ValidatorRecords`.
--  `cycle`: a set of `slots` with length `CYCLE_LENGTH`.
+- `cycle_length`: the amount of slots in a `cycle`.
+- `cycle`: a set of `slots` with length `CYCLE_LENGTH`.
+- `min_committee_size`: the minimum amount of validators required to form a
+   `committee`.
 - `shard_id`: the unique identifier of some chain requiring attestation by a
   `committees` in a `slot`.
 - `ShardAndCommittee`: an object linking a `committee` to a `shard`.
@@ -53,10 +50,10 @@ The function should accept the following inputs:
 
 _Note: the `validator_indices` and `shard_indices` parameters should be
 shuffled prior to this function to avoid biases in delegation generated for
-some input parameters (e.g., `len(validator_indicies) % min_committee_size >
+some input parameters (e.g., `len(validator_indices) % min_committee_size >
 0`)._
 
-_Note: all `validator_indicies` are assumed to be "active validators" which
+_Note: all `validator_indices` are assumed to be "active validators" which
 should be assigned to attestation duties._
 
 ## Outputs
