@@ -6,6 +6,12 @@ MIN_COMMITTEE_SIZE = 10
 SHARD_COUNT = 10
 
 
+def set_constants(cycle_length, min_committee_size, shard_count):
+    CYCLE_LENGTH = cycle_length
+    MIN_COMMITTEE_SIZE = min_committee_size
+    SHARD_COUNT = shard_count
+
+
 class ShardAndCommittee():
     def __init__(self, shard_id, committee):
         self.shard_id = shard_id
@@ -20,7 +26,6 @@ class ValidatorRecord():
 
 def split(lst, N):
     return [lst[len(lst)*i//N: len(lst)*(i+1)//N] for i in range(N)]
-
 
 def blake(x):
     return blake2b(x).digest()[:32]
