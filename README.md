@@ -10,6 +10,8 @@ accurate or useful.
   the Eth 2.0 spec.
 - [WIP] [delegation.md](delegation.md): A document intending to define the
   requirements for a validator delegation function.
+- [get_new_shuffling.py](get_new_shuffling/) - a very scrappy setup for
+ examining the `get_new_shuffling()` code from the Eth 2.0 spec.
 
 
 ## Other Useful Resources
