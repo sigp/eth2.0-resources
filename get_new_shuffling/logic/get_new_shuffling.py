@@ -1,16 +1,5 @@
 from hashlib import blake2b
 
-VALIDATOR_COUNT = 100
-CYCLE_LENGTH = 20
-MIN_COMMITTEE_SIZE = 10
-SHARD_COUNT = 10
-
-
-def set_constants(cycle_length, min_committee_size, shard_count):
-    CYCLE_LENGTH = cycle_length
-    MIN_COMMITTEE_SIZE = min_committee_size
-    SHARD_COUNT = shard_count
-
 
 class ShardAndCommittee():
     def __init__(self, shard_id, committee):
@@ -26,6 +15,7 @@ class ValidatorRecord():
 
 def split(lst, N):
     return [lst[len(lst)*i//N: len(lst)*(i+1)//N] for i in range(N)]
+
 
 def blake(x):
     return blake2b(x).digest()[:32]
@@ -60,7 +50,8 @@ def shuffle(lst, seed):
     return o
 
 
-def get_new_shuffling(seed, validators, dynasty, crosslinking_start_shard):
+def get_new_shuffling(CYCLE_LENGTH, MIN_COMMITTEE_SIZE, SHARD_COUNT,
+                      seed, validators, dynasty, crosslinking_start_shard):
     avs = get_active_validator_indices(validators, dynasty)
     if len(avs) >= CYCLE_LENGTH * MIN_COMMITTEE_SIZE:
         committees_per_slot = len(avs) // CYCLE_LENGTH // (MIN_COMMITTEE_SIZE * 2) + 1
@@ -81,33 +72,3 @@ def get_new_shuffling(seed, validators, dynasty, crosslinking_start_shard):
             committee=indices
         ) for j, indices in enumerate(shard_indices)])
     return o
-
-
-"""
-Start actually testing stuff
-"""
-seed = b"\x00" * 32
-validators = [ValidatorRecord(0, 10) for _ in range(VALIDATOR_COUNT)]
-dynasty = 1
-crosslinking_start_shard = 0
-
-
-cycle = get_new_shuffling(
-    seed,
-    validators,
-    dynasty,
-    crosslinking_start_shard)
-
-print("Configuration:")
-print("VALIDATOR_COUNT={}".format(VALIDATOR_COUNT))
-print("CYCLE_LENGTH={}".format(CYCLE_LENGTH))
-print("MIN_COMMITTEE_SIZE={}".format(MIN_COMMITTEE_SIZE))
-print("SHARD_COUNT={}".format(SHARD_COUNT))
-
-print("---------")
-for (i, slot) in enumerate(cycle):
-    print("Slot {}".format(i))
-    for (i, sac) in enumerate(slot):
-        print(("    Index {}:"
-               "ShardAndCommittee(shard_id={}, committee_len={})")
-              .format(i, sac.shard_id, len(sac.committee)))

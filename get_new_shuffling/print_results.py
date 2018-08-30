@@ -1,6 +1,16 @@
+"""
+Run this with:
+
+```
+$ python print_results.py
+```
+
+It will "pretty" print a cycle produced by
+`get_new_shuffling()`
+"""
+
 from logic.get_new_shuffling import (
     ValidatorRecord,
-    set_constants,
     get_new_shuffling
 )
 
@@ -9,8 +19,6 @@ CYCLE_LENGTH = 20
 MIN_COMMITTEE_SIZE = 10
 SHARD_COUNT = 10
 
-set_constants(CYCLE_LENGTH, MIN_COMMITTEE_SIZE, SHARD_COUNT)
-
 seed = b"\x00" * 32
 validators = [ValidatorRecord(0, 10) for _ in range(VALIDATOR_COUNT)]
 dynasty = 1
@@ -18,10 +26,8 @@ crosslinking_start_shard = 0
 
 
 cycle = get_new_shuffling(
-    seed,
-    validators,
-    dynasty,
-    crosslinking_start_shard)
+    CYCLE_LENGTH, MIN_COMMITTEE_SIZE, SHARD_COUNT,
+    seed, validators, dynasty, crosslinking_start_shard)
 
 print("Configuration:")
 print("VALIDATOR_COUNT={}".format(VALIDATOR_COUNT))
