@@ -21,22 +21,33 @@ VALIDATOR_COUNT = MIN_COMMITTEE_SIZE * SHARD_COUNT
 
 assigned_shards = set()
 for validator_count in range(VALIDATOR_COUNT, VALIDATOR_COUNT + 1):
+    # Setup for the cycle
     seed = b"\x00" * 32
     validators = [ValidatorRecord(0, 10) for _ in range(validator_count)]
     dynasty = 1
     crosslinking_start_shard = 0
 
+    # Generate the cycle
     cycle = get_new_shuffling(
         CYCLE_LENGTH, MIN_COMMITTEE_SIZE, SHARD_COUNT,
         seed, validators, dynasty, crosslinking_start_shard)
 
-    for (i, slot) in enumerate(cycle):
-        for (i, sac) in enumerate(slot):
+    # Recurse into the cycle and add each shard id to the
+    # accumlative set.
+    for slot in cycle:
+        for sac in slot:
             assigned_shards.add(sac.shard_id)
 
-    expected_shard_count = min(SHARD_COUNT, VALIDATOR_COUNT // MIN_COMMITTEE_SIZE)
+    # Calculate how many shards we think should be possible.
+    expected_shard_count = min(
+        SHARD_COUNT,
+        VALIDATOR_COUNT // MIN_COMMITTEE_SIZE
+    )
+    # Find how many shards were attested to in total
     assigned_shard_count = len(assigned_shards)
 
+    # If the amount of shards assigned wasn't what we expected,
+    # print the little speil.
     if expected_shard_count != assigned_shard_count:
         print("Scenario:")
         print("")
