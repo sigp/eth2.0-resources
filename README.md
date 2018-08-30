@@ -4,6 +4,9 @@ This repository contains some resources generated during the development of
 [Lighthouse](https://github.com/sigp/lighthouse). They are not guaranteed to be
 accurate or useful.
 
+This is not a collection of useful resources from abroad, it is a place to
+keep scrappy little scripts used during Sigma Prime Eth 2.0 research.
+
 ## Contents
 
 - [shuffling.md](shuffling.md): A walk-through of the shuffling used algorithm in
