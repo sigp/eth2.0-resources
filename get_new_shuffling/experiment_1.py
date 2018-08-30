@@ -20,6 +20,7 @@ SHARD_COUNT = 1024
 VALIDATOR_COUNT = MIN_COMMITTEE_SIZE * SHARD_COUNT
 
 assigned_shards = set()
+committee_sizes = []
 for validator_count in range(VALIDATOR_COUNT, VALIDATOR_COUNT + 1):
     # Setup for the cycle
     seed = b"\x00" * 32
@@ -37,6 +38,7 @@ for validator_count in range(VALIDATOR_COUNT, VALIDATOR_COUNT + 1):
     for slot in cycle:
         for sac in slot:
             assigned_shards.add(sac.shard_id)
+            committee_sizes.append(len(sac.committee))
 
     # Calculate how many shards we think should be possible.
     expected_shard_count = min(
@@ -45,6 +47,8 @@ for validator_count in range(VALIDATOR_COUNT, VALIDATOR_COUNT + 1):
     )
     # Find how many shards were attested to in total
     assigned_shard_count = len(assigned_shards)
+    # Find the average committee size
+    average_committee_size = sum(committee_sizes) / len(committee_sizes)
 
     # If the amount of shards assigned wasn't what we expected,
     # print the little speil.
@@ -63,8 +67,10 @@ for validator_count in range(VALIDATOR_COUNT, VALIDATOR_COUNT + 1):
             answer = "impossible"
 
         print(("It's {} to make {} shard attestations, but "
-               "get_new_shuffling produces {}.").format(
-            answer, expected_shard_count, assigned_shard_count))
+               "get_new_shuffling() produces {} with an average "
+               "committee size of {:.2f}.").format(
+                   answer, expected_shard_count, assigned_shard_count,
+                   average_committee_size))
         print("")
         print(("With {} validators and a minimum committee "
                "size of {}, it should be possible to create a commitee "
