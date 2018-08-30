@@ -1,6 +1,6 @@
 # Testing Code for "get_new_shuffling"
 
-This is a very, very piece of code to gather results from the
+This is a scrappy set of python scripts to gather results from the
 `get_new_shuffling` function in the Eth 2.0 spec.
 
 The spec updates frequently so you should make sure this version of code is
