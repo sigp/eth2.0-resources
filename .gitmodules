@@ -1,0 +1,3 @@
+[submodule "get_new_shuffling/beacon_chain"]
+	path = get_new_shuffling/beacon_chain
+	url = git@github.com:ethereum/beacon_chain.git

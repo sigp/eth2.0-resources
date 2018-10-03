@@ -7,11 +7,14 @@ Can we produce a scenario where:
     get_new_shuffling does not allocate to each shard in a
     slot?
 """
+import sys
+sys.path.insert(0, './beacon_chain')
 
-from logic.get_new_shuffling import (
-    ValidatorRecord,
+from beacon_chain.state.helpers import (
     get_new_shuffling
 )
+
+from beacon_chain.state.validator_record import ValidatorRecord
 
 # Specify the scenario
 CYCLE_LENGTH = 64
@@ -21,17 +24,18 @@ VALIDATOR_COUNT = MIN_COMMITTEE_SIZE * SHARD_COUNT
 
 assigned_shards = set()
 committee_sizes = []
+config = {'cycle_length': CYCLE_LENGTH,
+          'min_committee_size': MIN_COMMITTEE_SIZE,
+          'shard_count': SHARD_COUNT}
 for validator_count in range(VALIDATOR_COUNT, VALIDATOR_COUNT + 1):
     # Setup for the cycle
     seed = b"\x00" * 32
-    validators = [ValidatorRecord(0, 10) for _ in range(validator_count)]
+    validators = [ValidatorRecord(start_dynasty=0, end_dynasty=10) for _ in range(validator_count)]
     dynasty = 1
     crosslinking_start_shard = 0
 
     # Generate the cycle
-    cycle = get_new_shuffling(
-        CYCLE_LENGTH, MIN_COMMITTEE_SIZE, SHARD_COUNT,
-        seed, validators, dynasty, crosslinking_start_shard)
+    cycle = get_new_shuffling(seed, validators, dynasty, crosslinking_start_shard, config)
 
     # Recurse into the cycle and add each shard id to the
     # accumlative set.
