@@ -40,5 +40,7 @@ block = get_block_hash(
     desired_slot
 )
 
+# prints: desired_slot: 197
 print("desired_slot: {}".format(desired_slot))
+# prints: returned_slot: 104
 print("returned_slot: {}".format(block.slot))
