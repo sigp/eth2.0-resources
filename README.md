@@ -15,6 +15,8 @@ keep scrappy little scripts used during Sigma Prime Eth 2.0 research.
   requirements for a validator delegation function.
 - [get_new_shuffling.py](get_new_shuffling/) - a very scrappy setup for
  examining the `get_new_shuffling()` code from the Eth 2.0 spec.
+- [gossipsub_notes.md](gossipsub_notes.md): A document simplifying the details
+  about gossipsub in [libp2p](https://libp2p.io/).
 
 
 ## Other Useful Resources
