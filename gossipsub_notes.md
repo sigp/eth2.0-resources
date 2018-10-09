@@ -3,6 +3,13 @@
 Generic notes for GossipSub, cross point between the go implementation and the
 specification notes.
 
+**Useful Resources**:
+
+- [libp2p gossipsub spec](https://github.com/libp2p/specs/tree/master/pubsub/gossipsub)
+- [Misc Notes by @vyzo](https://gist.github.com/vyzo/3e42cd92becd9972e007c8bffb1ea298)
+- [@JustinDrake's questions](https://github.com/libp2p/go-floodsub/issues/77)
+- [Go Implementation](https://github.com/libp2p/go-floodsub/blob/master/gossipsub.go)
+
 General:
 
 |   Item   |                                   Structure                                   | Description                                                    |
