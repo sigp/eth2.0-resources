@@ -19,7 +19,7 @@ rejects any message that is slashable.
    notification service (console logs, email, etc.) if it is unable to
 obtain up-to-date blockchain information. This condition might caused by either
 node or network faults.
-4. A beacon node should be able to outsource shard syncing and block production
+4. A beacon node should be able to outsource shard syncing and shard block production
    to a remote server. This avoids placing an `O(c)` bound upon the beacon
 chain node with respect to obtaining canonical shard information.
 
@@ -29,7 +29,7 @@ chain node with respect to obtaining canonical shard information.
   chain.
 - **Shard Node (Snode)**: Provides canonical information about one or more shard
   chains.
-- **Shard Node Manager (Smgr)**: Manages one or more shard nodes which
+- **Shard Node Manager (SCmgr)**: Manages one or more shard nodes which
   each sync one or more shard chains.
 - **Validator Scheduler (Vsched)**: Maintains a clock and triggers validator
   duties like proposing a block or attesting to a shard.
@@ -37,7 +37,7 @@ chain node with respect to obtaining canonical shard information.
   if the BeaconChain or ShardChain nodes do not provide satisfactory data.
 - **Validator Slash Protector (Vslash)**: A stateful component which stores the history of
   a validators votes. Accepts attestations and forwards them to the Validator
-Signer if they are not slashable, otherwise discards.
+Signer if they are not slashable, otherwise discards and reports error.
 - **Validator Signer (Vsig)**: Cryptographically signs message that have passed the
   slash protector.
 
@@ -45,7 +45,7 @@ Signer if they are not slashable, otherwise discards.
 
 Here components are placed inside binaries (listed as `exe` files, for fun).
 Three different layouts are provide to demonstrate how the component layout
-might during different phases of Serenity deployment. The `v0.0.1` phase is the
+might differ between different phases of Serenity deployment. The `v0.0.1` phase is the
 focus of this document, future states are listed as considerations.
 
 ### v0.0.1: Testnet
@@ -101,7 +101,7 @@ additional slash protection.
 	- Vslash (b)
 	- Vsig
 
-#### Reasoning
+## Reasoning
 
 It is accepted that a validator operates on some time-based schedule -- it is
 required to perform tasks at points in wall-clock time that are not necessarily
@@ -124,7 +124,7 @@ It was established that a watchdog service should exist to provide alerts if a
 node (or the network) are not operating as expected. Some cases where a user
 might want to be notified include:
 
-- A validator is unable to obtain a new crystallized state `n` slots since a
+- A validator is unable to obtain a new crystallized state `n` slots after
   it expected a state transition to occur.
 - A validator is unable to obtain new shard block hashes.
 - Some RPC call to the beacon chain node fails.
@@ -132,7 +132,7 @@ might want to be notified include:
 
 The first part of the argument says that the scheduling service and watchdog
 service should exist together; the watchdog service can be less verbose and
-more effective it is has knowledge of the requirements a validator.
+more effective if it has knowledge of validator requirements.
 
 The second part of the argument says that a watchdog should not live inside the
 beacon node -- the watchdog cannot alarm if the entire node goes down.
@@ -145,7 +145,7 @@ not live in the beacon chain node.
 
 #### Separation of Concerns
 
-In the scenario where the Vsched is not in Bnode, more concerns are shifted out
+In the scenario where the Vsched is not in the Bnode, more concerns are shifted out
 of the Bnode. In this case the Bnode is not required to know exactly which
 validators are connected to it, it simply knows that it has clients that
 require arbitrary services like shard syncing and (unsigned) block and
